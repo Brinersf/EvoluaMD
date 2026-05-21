@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EvoluaMD</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+  <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .glass { background: rgba(20,30,25,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(76,255,200,0.25); }
+        .neon-glow { box-shadow: 0 0 30px rgba(76,255,200,0.25), inset 0 0 30px rgba(76,255,200,0.05); }
+        .neon-text { background: linear-gradient(135deg, #4cffca, #4dd9ff, #b366ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .grid-bg { background-image: linear-gradient(rgba(76,255,200,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(76,255,200,0.08) 1px, transparent 1px); background-size: 60px 60px; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .fade-up { animation: fadeUp 0.6s ease forwards; opacity:0; }
+        .chip { transition: all 0.2s; cursor: pointer; }
+        .chip.active { background: rgba(76,255,200,0.3); border-color: #4cffca; color: #4cffca; }
+        .chip:not(.active) { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #a0b4bf; }
+        .chip:hover { border-color: rgba(76,255,200,0.6); }
+        input, textarea, select { background: rgba(25,40,35,0.9); border: 1px solid rgba(76,255,200,0.2); color: #e8f0ee; border-radius: 0.75rem; }
+        input:focus, textarea:focus { outline: none; border-color: #4cffca; box-shadow: 0 0 10px rgba(76,255,200,0.2); }
+        input::placeholder, textarea::placeholder { color: #6b8a82; }
+        @keyframes pulse-glow { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+        .pulse-dot { animation: pulse-glow 2s ease infinite; }
+    </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen grid-bg" style="background: linear-gradient(145deg, #0f3d28, #165a3d, #0f3d28);">
+  <header class="glass sticky top-0 z-50">
+   <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center"><i data-lucide="activity" style="width:18px;height:18px;color:#0a0a0f;"></i>
+     </div>
+     <h1 data-template-id="app-title" class="canva-text font-bold"></h1>
+    </div>
+    <div class="flex items-center gap-2">
+     <div class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></div><span data-template-id="status-text" class="canva-text text-xs opacity-60"></span>
+    </div>
+   </div>
+  </header>
+  <main class="max-w-5xl mx-auto px-4 py-8 space-y-6"><!-- Profile -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-profile" class="canva-text font-bold mb-6 flex items-center gap-2 text-emerald-400"><i data-lucide="user" style="width:18px;height:18px;color:#00ffc8;"></i><span>Identificação Clínica</span></h2><!-- Primary patient info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-6 border-b border-white/10">
+     <div>
+      <p data-template-id="example-iniciais" class="canva-text text-xs text-gray-400 mb-2">Iniciais do Nome </p><label data-template-id="label-iniciais" for="inp-iniciais" class="canva-text text-sm block mb-1 text-white font-medium"></label> <input id="inp-iniciais" type="text" class="w-full px-4 py-2.5" oninput="state.iniciais=this.value;updateCompilation()">
+     </div>
+     <div>
+      <p data-template-id="example-idade" class="canva-text text-xs text-gray-400 mb-2">Idade</p><label data-template-id="label-idade" for="inp-idade" class="canva-text text-sm block mb-1 text-white font-medium"></label> <input id="inp-idade" type="text" class="w-full px-4 py-2.5" oninput="state.idade=this.value;updateCompilation()">
+     </div>
+     <div>
+      <p data-template-id="example-sexo" class="canva-text text-xs text-gray-400 mb-2">Sexo</p><label data-template-id="label-sexo" for="inp-sexo" class="canva-text text-sm block mb-1 text-white font-medium"></label> <select id="inp-sexo" class="w-full px-4 py-2.5" onchange="state.sexo=this.value;updateCompilation()"> <option value="">Selecione</option> <option value="M">Masculino</option> <option value="F">Feminino</option> </select>
+     </div>
+     <div>
+      <p data-template-id="example-ocupacao" class="canva-text text-xs text-gray-400 mb-2">Profissão/Ocupação</p><label data-template-id="label-ocupacao" for="inp-ocupacao" class="canva-text text-sm block mb-1 text-white font-medium"></label> <input id="inp-ocupacao" type="text" class="w-full px-4 py-2.5" oninput="state.ocupacao=this.value;updateCompilation()">
+     </div>
+    </div><!-- Chief complaint -->
+    <div class="mb-6">
+     <label data-template-id="label-queixa-principal" for="inp-queixa" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+     <div class="flex gap-2 items-end">
+      <textarea id="inp-queixa" class="flex-1 px-4 py-2.5 text-sm resize-none" rows="2" placeholder="Informe aqui a queixa principal do paciente ex: Dor no peito, dispneia, febre..." oninput="state.queixaPrincipal=this.value;updateCompilation()"></textarea> <button type="button" onclick="startDictation('queixa')" class="p-2.5 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Ditar"> <i data-lucide="mic" style="width:16px;height:16px;color:#00ffc8;"></i> </button>
+     </div>
+    </div><!-- Secondary patient info -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+     <div>
+      <p data-template-id="example-leito" class="canva-text text-xs text-gray-400 mb-2">Leito</p><label data-template-id="label-leito" for="inp-leito" class="canva-text text-sm block mb-1 text-white font-medium"></label> <input id="inp-leito" type="text" class="w-full px-4 py-2.5" oninput="state.leito=this.value;updateCompilation()">
+     </div>
+     <div>
+      <p data-template-id="example-origem" class="canva-text text-xs text-gray-400 mb-2">Origem: UPA, PS, Ambulatório</p><label data-template-id="label-origem" for="inp-origem" class="canva-text text-sm block mb-1 text-white font-medium"></label> <input id="inp-origem" type="text" class="w-full px-4 py-2.5" oninput="state.origem=this.value;updateCompilation()">
+     </div>
+    </div>
+    <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 mb-4">
+     <p data-template-id="confidentiality-notice" class="canva-text text-xs text-amber-200/80 italic"></p>
+    </div>
+    <div class="pt-4 border-t border-white/10 space-y-4">
+     <div>
+      <label data-template-id="label-alergias" class="canva-text text-sm block mb-3 text-white font-medium">Alergias</label>
+      <div class="flex gap-3 items-center"><button type="button" onclick="toggleAlergia(false)" id="al-nao" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="toggleAlergia(true)" id="al-sim" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button> <input id="alergia-desc" type="text" class="hidden flex-1 px-3 py-1.5 text-sm" placeholder="Descreva..." oninput="state.alergias.desc=this.value;updateCompilation()">
+      </div>
+     </div>
+     <div>
+      <label data-template-id="label-surgery" class="canva-text text-sm block mb-3 text-white font-medium">Antecedentes Cirúrgicos</label>
+      <div class="flex gap-3 items-center"><button type="button" onclick="toggleSurgery(false)" id="surg-nao" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="toggleSurgery(true)" id="surg-sim" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button> <input id="surgery-desc" type="text" class="hidden flex-1 px-3 py-1.5 text-sm" placeholder="Descreva procedimentos..." oninput="state.cirurgias.desc=this.value;updateCompilation()">
+      </div>
+     </div>
+     <div>
+      <label data-template-id="label-prior-hospitalization" class="canva-text text-sm block mb-3 text-white font-medium">Internação Prévia</label>
+      <div class="flex gap-3 items-center"><button type="button" onclick="togglePriorHospitalization(false)" id="hosp-nao" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="togglePriorHospitalization(true)" id="hosp-sim" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button> <input id="hosp-time" type="text" class="hidden flex-1 px-3 py-1.5 text-sm" placeholder="Ex: 3 meses, 1 ano, 2 semanas..." oninput="state.internacaoPrior.tempo=this.value;updateCompilation()">
+      </div>
+     </div>
+    </div>
+   </section><!-- Vitals -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-vitals" class="canva-text font-bold mb-4 flex items-center gap-2 text-pink-400"><i data-lucide="heart-pulse" style="width:18px;height:18px;color:#ff6b9d;"></i><span>Sinais Vitais</span></h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+     <div><label class="text-xs text-gray-500 block mb-1">PA (mmHg)</label> <input type="text" class="w-full px-3 py-2 text-sm" placeholder="120/80" oninput="state.vitals.pa=this.value;updateCompilation()">
+     </div>
+     <div><label class="text-xs text-gray-500 block mb-1">FC (bpm)</label> <input type="text" class="w-full px-3 py-2 text-sm" placeholder="80" oninput="state.vitals.fc=this.value;updateCompilation()">
+     </div>
+     <div><label class="text-xs text-gray-500 block mb-1">FR (irpm)</label> <input type="text" class="w-full px-3 py-2 text-sm" placeholder="18" oninput="state.vitals.fr=this.value;updateCompilation()">
+     </div>
+     <div><label class="text-xs text-gray-500 block mb-1">Temp (°C)</label> <input type="text" class="w-full px-3 py-2 text-sm" placeholder="36.5" oninput="state.vitals.temp=this.value;updateCompilation()">
+     </div>
+     <div><label class="text-xs text-gray-500 block mb-1">SpO₂ (%)</label> <input type="text" class="w-full px-3 py-2 text-sm" placeholder="98" oninput="state.vitals.spo2=this.value;updateCompilation()">
+     </div>
+    </div>
+   </section><!-- Medications -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-meds" class="canva-text font-bold mb-4 flex items-center gap-2 text-cyan-400"><i data-lucide="pill" style="width:18px;height:18px;color:#00b4d8;"></i><span>Medicações</span></h2>
+    <div id="med-list" class="space-y-3 mb-4"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+     <div><input id="med-name" type="text" class="w-full px-3 py-2 text-sm" placeholder="Ex: Dipirona">
+     </div>
+     <div><input id="med-dose" type="text" class="w-full px-3 py-2 text-sm" placeholder="Ex: 1g">
+     </div>
+     <div class="flex gap-2">
+      <select id="med-frequency" class="flex-1 px-3 py-2 text-sm"> <option value="">Frequência</option> <option value="6/6h">6/6h</option> <option value="8/8h">8/8h</option> <option value="12/12h">12/12h</option> <option value="24/24h">24/24h</option> <option value="SOS">SOS</option> <option value="Única dose">Única dose</option> <option value="Contínuo">Contínuo</option> <option value="Personalizada">Personalizada</option> </select> <button type="button" onclick="toggleAddFrequency()" class="px-3 py-2 rounded-lg border border-white/10 hover:border-emerald-400/40 transition text-xs" title="Adicionar frequência personalizada"> <i data-lucide="plus" style="width:16px;height:16px;color:#00ffc8;"></i> </button>
+     </div><input id="new-frequency" type="text" class="hidden w-full px-3 py-2 text-sm mt-2" placeholder="Ex: 3/3h, 4/4h..." oninput="updateFrequencyList()">
+     <div class="flex gap-2">
+      <button type="button" onclick="addMed()" class="flex-1 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition">+ Adicionar</button>
+     </div>
+    </div>
+   </section><!-- Nutrition -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-nutrition" class="canva-text font-bold mb-4 flex items-center gap-2 text-amber-400"><i data-lucide="apple" style="width:18px;height:18px;color:#f59e0b;"></i><span>Condições Nutricionais</span></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+     <div><label data-template-id="label-food-access" for="inp-food-access" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="toggleNutrition('access','acesso_normal')" id="access-normal" class="chip border px-3 py-1.5 rounded-lg text-sm">Acesso Normal</button> <button type="button" onclick="toggleNutrition('access','acesso_restrito')" id="access-restricted" class="chip border px-3 py-1.5 rounded-lg text-sm">Acesso Restrito</button> <button type="button" onclick="toggleNutrition('access','npo')" id="access-npo" class="chip border px-3 py-1.5 rounded-lg text-sm">NPO</button>
+      </div>
+     </div>
+     <div>
+      <label data-template-id="label-tube" for="inp-tube" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="toggleNutrition('naso_enteric_tube','sim_sne')" id="tube-yes" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim (SNE)</button> <button type="button" onclick="toggleNutrition('naso_enteric_tube','nao')" id="tube-no" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button>
+      </div>
+     </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+     <div>
+      <label data-template-id="label-weight" for="inp-weight" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="toggleNutrition('weight_status','peso_normal')" id="weight-normal" class="chip border px-3 py-1.5 rounded-lg text-sm active">Peso Normal</button> <button type="button" onclick="toggleNutrition('weight_status','baixo_peso')" id="weight-low" class="chip border px-3 py-1.5 rounded-lg text-sm">Baixo Peso</button> <button type="button" onclick="toggleNutrition('weight_status','sobrepeso')" id="weight-over" class="chip border px-3 py-1.5 rounded-lg text-sm">Sobrepeso</button>
+      </div>
+     </div>
+     <div>
+      <label data-template-id="label-hydration" for="inp-hydration" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="toggleNutrition('hydration_status','hidratado')" id="hydration-hydrated" class="chip border px-3 py-1.5 rounded-lg text-sm active">Hidratado</button> <button type="button" onclick="toggleNutrition('hydration_status','desidratado')" id="hydration-dehydrated" class="chip border px-3 py-1.5 rounded-lg text-sm">Desidratado</button> <button type="button" onclick="toggleNutrition('hydration_status','sobrecarga')" id="hydration-overload" class="chip border px-3 py-1.5 rounded-lg text-sm">Sobrecarga Hídrica</button>
+      </div>
+     </div>
+    </div>
+    <div class="mb-4">
+     <label data-template-id="label-nutrition-notes" for="nutrition-notes" class="canva-text text-sm block mb-2 text-white font-medium"></label>
+     <div class="flex gap-2 items-end">
+      <textarea id="nutrition-notes" class="flex-1 px-3 py-2.5 text-sm resize-none" rows="3" placeholder="Observações nutricionais adicionais..." oninput="state.nutrition.notes=this.value;updateCompilation()"></textarea> <button type="button" onclick="startDictation('nutrition')" class="p-2.5 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Ditar"> <i data-lucide="mic" style="width:16px;height:16px;color:#00ffc8;"></i> </button>
+     </div>
+    </div>
+   </section><!-- Anamnesis -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-anamnesis" class="canva-text font-bold mb-4 flex items-center gap-2 text-violet-400"><i data-lucide="stethoscope" style="width:18px;height:18px;color:#7b2ff7;"></i><span>Exame Físico / Sistemas</span></h2>
+    <div id="anamnesis-container" class="space-y-5"></div>
+    <div class="mt-6 pt-6 border-t border-white/10">
+     <div class="flex gap-2 items-end">
+      <div class="flex-1">
+       <label for="new-system" class="text-xs text-gray-500 block mb-1">Adicionar novo sistema</label> <input id="new-system" type="text" class="w-full px-3 py-2.5 text-sm" placeholder="Ex: Psiquiátrico, Reumático...">
+      </div><button type="button" onclick="addNewSystem()" class="px-4 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition flex items-center gap-1"> <i data-lucide="plus" style="width:16px;height:16px;"></i> Adicionar </button>
+     </div>
+    </div>
+    <div id="custom-findings-section" class="mt-4 p-4 rounded-lg bg-white/5 border border-white/5 hidden">
+     <h3 class="text-xs font-medium text-gray-300 mb-3">Adicionar achados para sistemas personalizados</h3>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="custom-findings-list"></div>
+    </div>
+   </section><!-- Laboratory Exams -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-labs" class="canva-text font-bold mb-4 flex items-center gap-2 text-blue-400"><i data-lucide="flask" style="width:18px;height:18px;color:#3b82f6;"></i><span>Exames Laboratoriais</span></h2>
+    <div id="labs-list" class="space-y-3 mb-4"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+     <div><label class="text-xs text-gray-500 block mb-1">Selecionar Exame</label> <select id="lab-preset" class="w-full px-3 py-2 text-sm"> <option value="">Escolha um exame...</option> <option value="Hemograma|g/dL">Hemograma</option> <option value="Glicemia|mg/dL">Glicemia</option> <option value="Creatinina|mg/dL">Creatinina</option> <option value="Ureia|mg/dL">Ureia</option> <option value="Sódio|mEq/L">Sódio</option> <option value="Potássio|mEq/L">Potássio</option> <option value="Cálcio|mg/dL">Cálcio</option> <option value="Magnésio|mg/dL">Magnésio</option> <option value="Fosfato|mg/dL">Fosfato</option> <option value="TSH|mIU/mL">TSH</option> <option value="T3|pg/mL">T3</option> <option value="T4|pmol/L">T4</option> <option value="Albumina|g/dL">Albumina</option> <option value="Proteína Total|g/dL">Proteína Total</option> <option value="AST|U/L">AST</option> <option value="ALT|U/L">ALT</option> <option value="Bilirrubina Total|mg/dL">Bilirrubina Total</option> <option value="Fosfatase Alcalina|U/L">Fosfatase Alcalina</option> <option value="Colesterol Total|mg/dL">Colesterol Total</option> <option value="Triglicerídios|mg/dL">Triglicerídios</option> <option value="HDL|mg/dL">HDL</option> <option value="LDL|mg/dL">LDL</option> <option value="Hemoglobina|g/dL">Hemoglobina</option> <option value="Hematócrito|%">Hematócrito</option> <option value="Plaquetas|/μL">Plaquetas</option> <option value="PT/INR|segundos">PT/INR</option> <option value="TTPA|segundos">TTPA</option> <option value="Fibrinogênio|mg/dL">Fibrinogênio</option> <option value="Lactato|mmol/L">Lactato</option> <option value="PCR|mg/L">PCR</option> <option value="Procalcitonina|ng/mL">Procalcitonina</option> <option value="custom">+ Adicionar Exame Personalizado</option> </select>
+     </div>
+     <div id="lab-value-wrapper"><label class="text-xs text-gray-500 block mb-1">Valor</label> <input id="lab-value" type="text" class="w-full px-3 py-2 text-sm" placeholder="Ex: 12.5, 98...">
+     </div>
+     <div id="lab-unit-wrapper" class="hidden"><label class="text-xs text-gray-500 block mb-1">Unidade</label> <input id="lab-unit" type="text" class="w-full px-3 py-2 text-sm" placeholder="Ex: g/dL, mg/dL...">
+     </div>
+     <div id="lab-custom-wrapper" class="hidden"><label class="text-xs text-gray-500 block mb-1">Nome do Exame</label> <input id="lab-custom-name" type="text" class="w-full px-3 py-2 text-sm" placeholder="Ex: Proteína C Reativa...">
+     </div>
+     <div class="flex gap-2">
+      <button type="button" onclick="addLab()" class="flex-1 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition">+ Adicionar</button>
+     </div>
+    </div>
+   </section><!-- Smoking -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-smoking" class="canva-text font-bold mb-4 flex items-center gap-2 text-red-400"><i data-lucide="cigarette" style="width:18px;height:18px;color:#ef4444;"></i><span>Status de Tabagismo</span></h2>
+    <div class="mb-4">
+     <label data-template-id="label-smoker" class="canva-text text-sm block mb-3 text-white font-medium"></label>
+     <div class="flex gap-2 flex-wrap">
+      <button type="button" onclick="toggleSmoker(false)" id="smoker-no" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="toggleSmoker(true)" id="smoker-yes" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button>
+     </div>
+    </div>
+    <div id="nrt-section" class="hidden pt-4 border-t border-white/10 space-y-4">
+     <div>
+      <label data-template-id="label-nrt" class="canva-text text-sm block mb-3 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="toggleNRT(false)" id="nrt-no" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="toggleNRT(true)" id="nrt-yes" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button>
+      </div>
+     </div>
+     <div id="patch-options" class="hidden">
+      <label data-template-id="label-patch" class="canva-text text-sm block mb-3 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="selectPatch('14mg')" id="patch-14" class="chip border px-3 py-1.5 rounded-lg text-sm">Adesivo 14mg</button> <button type="button" onclick="selectPatch('21mg')" id="patch-21" class="chip border px-3 py-1.5 rounded-lg text-sm">Adesivo 21mg</button>
+      </div>
+     </div>
+    </div>
+   </section><!-- Alcohol -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-alcohol" class="canva-text font-bold mb-4 flex items-center gap-2 text-orange-400"><i data-lucide="wine" style="width:18px;height:18px;color:#f97316;"></i><span>Consumo de Bebida Alcoólica</span></h2>
+    <div class="mb-4">
+     <label data-template-id="label-alcohol-consumer" class="canva-text text-sm block mb-3 text-white font-medium"></label>
+     <div class="flex gap-2 flex-wrap">
+      <button type="button" onclick="toggleAlcoholConsumer(false)" id="alcohol-no" class="chip border px-3 py-1.5 rounded-lg text-sm active">Não</button> <button type="button" onclick="toggleAlcoholConsumer(true)" id="alcohol-yes" class="chip border px-3 py-1.5 rounded-lg text-sm">Sim</button>
+     </div>
+    </div>
+    <div id="alcohol-frequency-section" class="hidden pt-4 border-t border-white/10 space-y-4">
+     <div>
+      <label data-template-id="label-alcohol-frequency" class="canva-text text-sm block mb-3 text-white font-medium"></label>
+      <div class="flex gap-2 flex-wrap">
+       <button type="button" onclick="selectAlcoholFrequency('diario')" id="alcohol-freq-daily" class="chip border px-3 py-1.5 rounded-lg text-sm">Diário</button> <button type="button" onclick="selectAlcoholFrequency('semanal')" id="alcohol-freq-weekly" class="chip border px-3 py-1.5 rounded-lg text-sm">Semanal</button> <button type="button" onclick="selectAlcoholFrequency('ocasional')" id="alcohol-freq-occasional" class="chip border px-3 py-1.5 rounded-lg text-sm">Ocasional</button>
+      </div>
+     </div>
+     <div>
+      <label data-template-id="label-alcohol-quantity" for="alcohol-quantity" class="canva-text text-sm block mb-2 text-white font-medium"></label> <input id="alcohol-quantity" type="text" class="w-full px-4 py-2.5" placeholder="Ex: 2 unidades/dia, 6 cervejas/semana..." oninput="state.alcohol.quantity=this.value;updateCompilation()">
+     </div>
+    </div>
+   </section><!-- Conditions -->
+   <section class="glass rounded-2xl p-6 fade-up">
+    <h2 data-template-id="section-conditions" class="canva-text font-bold mb-4 flex items-center gap-2 text-yellow-400"><i data-lucide="shield-alert" style="width:18px;height:18px;color:#f59e0b;"></i><span>Condições Especiais</span></h2>
+    <div id="conditions-chips" class="flex flex-wrap gap-2 mb-3"></div>
+    <div class="flex gap-2 items-center"><textarea id="conditions-notes" class="flex-1 px-3 py-2 text-sm resize-none" rows="2" placeholder="Observações sobre condições..." oninput="state.conditionNotes=this.value;updateCompilation()"></textarea> <button type="button" onclick="startDictation('conditions')" class="p-2 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Ditar"> <i data-lucide="mic" style="width:16px;height:16px;color:#00ffc8;"></i> </button>
+    </div>
+   </section><!-- Output -->
+   <section class="glass neon-glow rounded-2xl p-6 fade-up">
+    <div class="flex items-center justify-between mb-4">
+     <h2 data-template-id="section-output" class="canva-text font-bold flex items-center gap-2 text-teal-300"><i data-lucide="file-text" style="width:18px;height:18px;color:#00ffc8;"></i><span>Evolução Compilada</span></h2>
+     <div class="flex gap-2"><button type="button" onclick="toggleEditMode()" id="edit-toggle-btn" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-300 hover:border-cyan-400/40 transition flex items-center gap-1"> <i data-lucide="pencil" style="width:14px;height:14px;"></i> Editar </button> <button type="button" onclick="copyOutput()" id="copy-btn" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-300 hover:border-emerald-400/40 transition flex items-center gap-1"> <i data-lucide="copy" style="width:14px;height:14px;"></i> Copiar </button> <button type="button" onclick="polishWithAI()" id="polish-btn" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 text-xs text-emerald-400 font-medium hover:from-emerald-500/30 hover:to-cyan-500/30 transition flex items-center gap-1"> <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Polir com IA </button>
+     </div>
+    </div><textarea id="output-area" class="w-full px-4 py-3 text-sm leading-relaxed resize-y min-h-[200px]" readonly></textarea>
+    <p data-template-id="ai-notice" class="canva-text text-xs mt-2 opacity-40 italic"></p>
+   </section>
+   <footer class="text-center py-6">
+    <p data-template-id="footer-text" class="canva-text text-xs opacity-40"></p>
+   </footer>
+  </main>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+        const state = {
+            iniciais: '',
+            idade: '',
+            sexo: '',
+            leito: '',
+            ocupacao: '',
+            origem: '',
+            queixaPrincipal: '',
+            vitals: { pa: '', fc: '', fr: '', temp: '', spo2: '' },
+            medications: [],
+            labs: [],
+            nutrition: {
+                access: 'acesso_normal',
+                naso_enteric_tube: 'nao',
+                weight_status: 'peso_normal',
+                hydration_status: 'hidratado',
+                notes: ''
+            },
+            smoking: {
+                isSmoker: false,
+                recommendNRT: false,
+                patchDose: null
+            },
+            alcohol: {
+                isConsumer: false,
+                frequency: null,
+                quantity: ''
+            },
+            internacaoPrior: {
+                teve: false,
+                tempo: ''
+            },
+            anamnesis: {
+                "Neurológico": ["Consciente", "Orientado", "Déficit motor", "Afásico", "Pupilas isocóricas"],
+                "Respiratório": ["MV+", "Sibilos", "Crepitações", "Dispneia", "Tosse"],
+                "Cardiovascular": ["RCR", "Sopros", "Edema", "Pulsos presentes", "Taquicardia"],
+                "Gastrointestinal": ["RHA+", "Abdome flácido", "Dor à palpação", "Evacuado", "Diarreia"],
+                "Renal": ["Em diálise", "Necessita ajuste de dose", "Em uso de antibiótico", "Oligúria", "Monitorizar balanço hídrico"]
+            },
+            customSystems: {},
+            conditions: { "HIV": false, "Meningite": false, "Tuberculose": false, "Covid": false },
+            conditionNotes: '',
+            selectedFindings: {},
+            observations: {},
+            alergias: { tem: false, desc: '' },
+            cirurgias: { teve: false, desc: '' }
+        };
+
+        function renderAnamnesis() {
+            const container = document.getElementById('anamnesis-container');
+            if (container.children.length === 0) {
+                Object.entries(state.anamnesis).forEach(([system, findings]) => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <h3 class="text-sm font-medium text-gray-300 mb-2 cursor-pointer hover:text-emerald-400 transition" onclick="toggleSystemPanel('${system}')">${system}</h3>
+                        <div class="flex flex-wrap gap-2 mb-2 hidden" id="chips-${system}">
+                            ${findings.map(f => `<button type="button" class="chip border px-3 py-1 rounded-lg text-xs" onclick="toggleFinding('${system}','${f}',this)">${f}</button>`).join('')}
+                        </div>
+                        <div class="flex gap-2 items-center hidden" id="panel-${system}">
+                            <input type="text" class="flex-1 px-3 py-1.5 text-xs" placeholder="Obs. ${system.toLowerCase()}..." oninput="state.observations['${system}']=this.value;updateCompilation()" id="obs-${system}">
+                            <button type="button" onclick="startDictation('${system}')" class="p-1.5 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Ditar">
+                                <i data-lucide="mic" style="width:14px;height:14px;color:#00ffc8;"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+                
+                // Render custom systems
+                Object.entries(state.customSystems).forEach(([system, findings]) => {
+                    const div = document.createElement('div');
+                    const findingsArray = findings.findings || [];
+                    div.innerHTML = `
+                        <h3 class="text-sm font-medium text-cyan-300 mb-2 cursor-pointer hover:text-cyan-200 transition" onclick="toggleSystemPanel('${system}')">${system}</h3>
+                        <div class="flex flex-wrap gap-2 mb-2 hidden" id="chips-${system}">
+                            ${findingsArray.map(f => `<button type="button" class="chip border px-3 py-1 rounded-lg text-xs" onclick="toggleFinding('${system}','${f}',this)">${f}</button>`).join('')}
+                        </div>
+                        <div class="flex gap-2 items-center hidden" id="panel-${system}">
+                            <input type="text" class="flex-1 px-3 py-1.5 text-xs" placeholder="Obs. ${system.toLowerCase()}..." oninput="state.observations['${system}']=this.value;updateCompilation()" id="obs-${system}">
+                            <button type="button" onclick="startDictation('${system}')" class="p-1.5 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Ditar">
+                                <i data-lucide="mic" style="width:14px;height:14px;color:#00ffc8;"></i>
+                            </button>
+                            <button type="button" onclick="addFindingToSystem('${system}')" class="p-1.5 rounded-lg border border-white/10 hover:border-emerald-400/40 transition" title="Adicionar achado">
+                                <i data-lucide="plus" style="width:14px;height:14px;color:#00ffc8;"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+                
+                lucide.createIcons();
+            }
+        }
+
+        function toggleSystemPanel(system) {
+            const panel = document.getElementById(`panel-${system}`);
+            const chips = document.getElementById(`chips-${system}`);
+            if (panel) {
+                panel.classList.toggle('hidden');
+                chips.classList.toggle('hidden');
+                // Focus input if showing
+                if (!panel.classList.contains('hidden')) {
+                    const input = document.getElementById(`obs-${system}`);
+                    if (input) setTimeout(() => input.focus(), 100);
+                }
+            }
+        }
+
+        function removeSystem(system) {
+            if (state.customSystems[system]) {
+                delete state.customSystems[system];
+                if (state.selectedFindings[system]) delete state.selectedFindings[system];
+                if (state.observations[system]) delete state.observations[system];
+                
+                const container = document.getElementById('anamnesis-container');
+                container.innerHTML = '';
+                renderAnamnesis();
+                updateCompilation();
+            }
+        }
+
+        function addNewSystem() {
+            const input = document.getElementById('new-system');
+            const systemName = input.value.trim();
+            
+            if (!systemName) {
+                showToast('Digite um nome para o sistema.');
+                return;
+            }
+            
+            if (state.anamnesis[systemName] || state.customSystems[systemName]) {
+                showToast('Este sistema já existe.');
+                return;
+            }
+            
+            state.customSystems[systemName] = { findings: [] };
+            state.selectedFindings[systemName] = [];
+            state.observations[systemName] = '';
+            
+            input.value = '';
+            
+            const container = document.getElementById('anamnesis-container');
+            container.innerHTML = '';
+            renderAnamnesis();
+            
+            showCustomFindingsSection(systemName);
+            updateCompilation();
+        }
+
+        function showCustomFindingsSection(system) {
+            const section = document.getElementById('custom-findings-section');
+            const list = document.getElementById('custom-findings-list');
+            
+            section.classList.remove('hidden');
+            list.innerHTML = `
+                <div class="col-span-full">
+                    <p class="text-xs text-gray-400 mb-2">Adicionando achados a "<span class="text-cyan-300">${system}</span>"</p>
+                </div>
+                <div class="col-span-full flex gap-2">
+                    <input type="text" id="new-finding-input" class="flex-1 px-3 py-2 text-sm" placeholder="Novo achado..." oninput="">
+                    <button type="button" onclick="addFinding('${system}')" class="px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition flex items-center gap-1">
+                        <i data-lucide="plus" style="width:14px;height:14px;"></i> Adicionar
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('new-finding-input')?.focus();
+            lucide.createIcons();
+        }
+
+        function addFinding(system) {
+            const input = document.getElementById('new-finding-input');
+            const finding = input.value.trim();
+            
+            if (!finding) {
+                showToast('Digite o achado.');
+                return;
+            }
+            
+            if (!state.customSystems[system]) {
+                state.customSystems[system] = { findings: [] };
+                state.selectedFindings[system] = [];
+                state.observations[system] = '';
+            }
+            
+            if (state.customSystems[system].findings.includes(finding)) {
+                showToast('Este achado já existe.');
+                return;
+            }
+            
+            state.customSystems[system].findings.push(finding);
+            input.value = '';
+            
+            const container = document.getElementById('anamnesis-container');
+            container.innerHTML = '';
+            renderAnamnesis();
+            
+            input.focus();
+            updateCompilation();
+        }
+
+        function addFindingToSystem(system) {
+            showCustomFindingsSection(system);
+        }
+
+
+        function renderConditions() {
+            const container = document.getElementById('conditions-chips');
+            if (container.children.length === 0) {
+                Object.keys(state.conditions).forEach(c => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'chip border px-3 py-1.5 rounded-lg text-sm';
+                    btn.textContent = c;
+                    btn.onclick = () => { state.conditions[c] = !state.conditions[c]; btn.classList.toggle('active', state.conditions[c]); updateCompilation(); };
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function toggleFinding(system, finding, el) {
+            if (!state.selectedFindings[system]) state.selectedFindings[system] = [];
+            const idx = state.selectedFindings[system].indexOf(finding);
+            if (idx > -1) { state.selectedFindings[system].splice(idx, 1); el.classList.remove('active'); }
+            else { state.selectedFindings[system].push(finding); el.classList.add('active'); }
+            updateCompilation();
+        }
+
+        function toggleNutrition(field, value) {
+            state.nutrition[field] = value;
+            updateNutritionUI();
+            updateCompilation();
+        }
+
+        function updateNutritionUI() {
+            document.getElementById('access-normal').classList.toggle('active', state.nutrition.access === 'acesso_normal');
+            document.getElementById('access-restricted').classList.toggle('active', state.nutrition.access === 'acesso_restrito');
+            document.getElementById('access-npo').classList.toggle('active', state.nutrition.access === 'npo');
+            
+            document.getElementById('tube-yes').classList.toggle('active', state.nutrition.naso_enteric_tube === 'sim_sne');
+            document.getElementById('tube-no').classList.toggle('active', state.nutrition.naso_enteric_tube === 'nao');
+            
+            document.getElementById('weight-normal').classList.toggle('active', state.nutrition.weight_status === 'peso_normal');
+            document.getElementById('weight-low').classList.toggle('active', state.nutrition.weight_status === 'baixo_peso');
+            document.getElementById('weight-over').classList.toggle('active', state.nutrition.weight_status === 'sobrepeso');
+            
+            document.getElementById('hydration-hydrated').classList.toggle('active', state.nutrition.hydration_status === 'hidratado');
+            document.getElementById('hydration-dehydrated').classList.toggle('active', state.nutrition.hydration_status === 'desidratado');
+            document.getElementById('hydration-overload').classList.toggle('active', state.nutrition.hydration_status === 'sobrecarga');
+        }
+
+        function toggleSmoker(isSmoker) {
+            state.smoking.isSmoker = isSmoker;
+            document.getElementById('smoker-yes').classList.toggle('active', isSmoker);
+            document.getElementById('smoker-no').classList.toggle('active', !isSmoker);
+            document.getElementById('nrt-section').classList.toggle('hidden', !isSmoker);
+            
+            if (!isSmoker) {
+                state.smoking.recommendNRT = false;
+                state.smoking.patchDose = null;
+                document.getElementById('nrt-no').classList.add('active');
+                document.getElementById('nrt-yes').classList.remove('active');
+                document.getElementById('patch-options').classList.add('hidden');
+                document.getElementById('patch-14').classList.remove('active');
+                document.getElementById('patch-21').classList.remove('active');
+            }
+            updateCompilation();
+        }
+
+        function toggleNRT(recommendNRT) {
+            state.smoking.recommendNRT = recommendNRT;
+            document.getElementById('nrt-yes').classList.toggle('active', recommendNRT);
+            document.getElementById('nrt-no').classList.toggle('active', !recommendNRT);
+            document.getElementById('patch-options').classList.toggle('hidden', !recommendNRT);
+            
+            if (!recommendNRT) {
+                state.smoking.patchDose = null;
+                document.getElementById('patch-14').classList.remove('active');
+                document.getElementById('patch-21').classList.remove('active');
+            }
+            updateCompilation();
+        }
+
+        function selectPatch(dose) {
+            state.smoking.patchDose = dose;
+            document.getElementById('patch-14').classList.toggle('active', dose === '14mg');
+            document.getElementById('patch-21').classList.toggle('active', dose === '21mg');
+            updateCompilation();
+        }
+
+        function toggleAlcoholConsumer(isConsumer) {
+            state.alcohol.isConsumer = isConsumer;
+            document.getElementById('alcohol-yes').classList.toggle('active', isConsumer);
+            document.getElementById('alcohol-no').classList.toggle('active', !isConsumer);
+            document.getElementById('alcohol-frequency-section').classList.toggle('hidden', !isConsumer);
+            
+            if (!isConsumer) {
+                state.alcohol.frequency = null;
+                state.alcohol.quantity = '';
+                document.getElementById('alcohol-freq-daily').classList.remove('active');
+                document.getElementById('alcohol-freq-weekly').classList.remove('active');
+                document.getElementById('alcohol-freq-occasional').classList.remove('active');
+                document.getElementById('alcohol-quantity').value = '';
+            }
+            updateCompilation();
+        }
+
+        function selectAlcoholFrequency(frequency) {
+            state.alcohol.frequency = frequency;
+            document.getElementById('alcohol-freq-daily').classList.toggle('active', frequency === 'diario');
+            document.getElementById('alcohol-freq-weekly').classList.toggle('active', frequency === 'semanal');
+            document.getElementById('alcohol-freq-occasional').classList.toggle('active', frequency === 'ocasional');
+            updateCompilation();
+        }
+
+        function toggleAlergia(tem) {
+            state.alergias.tem = tem;
+            document.getElementById('al-sim').classList.toggle('active', tem);
+            document.getElementById('al-nao').classList.toggle('active', !tem);
+            document.getElementById('alergia-desc').classList.toggle('hidden', !tem);
+            updateCompilation();
+        }
+
+        function toggleSurgery(teve) {
+            state.cirurgias.teve = teve;
+            document.getElementById('surg-sim').classList.toggle('active', teve);
+            document.getElementById('surg-nao').classList.toggle('active', !teve);
+            document.getElementById('surgery-desc').classList.toggle('hidden', !teve);
+            updateCompilation();
+        }
+
+        function togglePriorHospitalization(teve) {
+            state.internacaoPrior.teve = teve;
+            document.getElementById('hosp-sim').classList.toggle('active', teve);
+            document.getElementById('hosp-nao').classList.toggle('active', !teve);
+            document.getElementById('hosp-time').classList.toggle('hidden', !teve);
+            updateCompilation();
+        }
+
+        function toggleAddFrequency() {
+            const input = document.getElementById('new-frequency');
+            input.classList.toggle('hidden');
+            if (!input.classList.contains('hidden')) input.focus();
+            else input.value = '';
+        }
+
+        function updateFrequencyList() {
+            const input = document.getElementById('new-frequency');
+            const value = input.value.trim();
+            if (value) {
+                const freqSelect = document.getElementById('med-frequency');
+                let optionExists = false;
+                for (let opt of freqSelect.options) {
+                    if (opt.value === value) { optionExists = true; break; }
+                }
+                if (!optionExists) {
+                    const newOpt = document.createElement('option');
+                    newOpt.value = value;
+                    newOpt.textContent = value;
+                    freqSelect.appendChild(newOpt);
+                }
+                freqSelect.value = value;
+            }
+        }
+
+        function addMed() {
+            const nameInput = document.getElementById('med-name');
+            const doseInput = document.getElementById('med-dose');
+            const freqSelect = document.getElementById('med-frequency');
+            const freqInput = document.getElementById('new-frequency');
+            
+            if (!nameInput.value.trim()) return;
+            
+            const nome = nameInput.value.trim();
+            const dose = doseInput.value.trim();
+            const freq = freqSelect.value || '';
+            const dosagem = [dose, freq].filter(Boolean).join(' ');
+            
+            state.medications.push({
+                nome: nome,
+                dosagem: dosagem,
+                padronizado: false,
+                emPosse: false
+            });
+            nameInput.value = '';
+            doseInput.value = '';
+            freqSelect.value = '';
+            freqInput.value = '';
+            freqInput.classList.add('hidden');
+            renderMeds();
+            updateCompilation();
+        }
+
+        function removeMed(i) {
+            state.medications.splice(i, 1);
+            renderMeds();
+            updateCompilation();
+        }
+
+        function addLab() {
+            const presetSelect = document.getElementById('lab-preset');
+            const valueInput = document.getElementById('lab-value');
+            const unitInput = document.getElementById('lab-unit');
+            const customNameInput = document.getElementById('lab-custom-name');
+            
+            let nome, unidade;
+            
+            if (presetSelect.value === 'custom') {
+                nome = customNameInput.value.trim();
+                unidade = unitInput.value.trim();
+                if (!nome) {
+                    showToast('Digite o nome do exame personalizado.');
+                    return;
+                }
+            } else if (presetSelect.value) {
+                const [name, unit] = presetSelect.value.split('|');
+                nome = name;
+                unidade = unit;
+            } else {
+                showToast('Selecione um exame.');
+                return;
+            }
+            
+            const valor = valueInput.value.trim();
+            if (!valor) {
+                showToast('Digite o valor do exame.');
+                return;
+            }
+            
+            state.labs.push({
+                nome: nome,
+                valor: valor,
+                unidade: unidade
+            });
+            
+            presetSelect.value = '';
+            valueInput.value = '';
+            unitInput.value = '';
+            customNameInput.value = '';
+            document.getElementById('lab-unit-wrapper').classList.add('hidden');
+            document.getElementById('lab-custom-wrapper').classList.add('hidden');
+            presetSelect.focus();
+            
+            renderLabs();
+            updateCompilation();
+        }
+
+        function removeLab(i) {
+            state.labs.splice(i, 1);
+            renderLabs();
+            updateCompilation();
+        }
+
+        function renderLabs() {
+            const list = document.getElementById('labs-list');
+            list.innerHTML = state.labs.map((l, i) => `
+                <div class="rounded-lg bg-white/5 border border-white/5 p-3">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-200">${l.nome}</p>
+                            <p class="text-xs text-gray-500 mt-1">Valor: ${l.valor}${l.unidade ? ' ' + l.unidade : ''}</p>
+                        </div>
+                        <button type="button" onclick="removeLab(${i})" class="text-red-400/60 hover:text-red-400 transition"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+
+        function renderMeds() {
+            const list = document.getElementById('med-list');
+            list.innerHTML = state.medications.map((m, i) => `
+                <div class="rounded-lg bg-white/5 border border-white/5 p-3">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-200">${m.nome}</p>
+                            <p class="text-xs text-gray-500 mt-1">Dose/Freq: ${m.dosagem}</p>
+                        </div>
+                        <button type="button" onclick="removeMed(${i})" class="text-red-400/60 hover:text-red-400 transition"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+                    </div>
+                    <div class="flex gap-2 items-center mt-2">
+                        <div class="flex gap-1">
+                            <button type="button" class="chip border px-2.5 py-1 rounded-lg text-xs ${m.padronizado ? 'active' : ''}" onclick="toggleMedFlag(${i}, 'padronizado')" title="Padronizado pela instituição">
+                                <i data-lucide="check-circle" style="width:13px;height:13px;margin-right:4px;vertical-align:middle;"></i>Padronizado
+                            </button>
+                            <button type="button" class="chip border px-2.5 py-1 rounded-lg text-xs ${!m.padronizado ? 'active' : ''}" onclick="toggleMedNotStandardized(${i})" title="Não padronizado pela instituição">
+                                <i data-lucide="x-circle" style="width:13px;height:13px;margin-right:4px;vertical-align:middle;"></i>Não Padronizado
+                            </button>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" class="chip border px-2.5 py-1 rounded-lg text-xs ${m.emPosse ? 'active' : ''}" onclick="toggleMedFlag(${i}, 'emPosse')" title="Medicamento em posse do paciente no leito">
+                                <i data-lucide="package" style="width:13px;height:13px;margin-right:4px;vertical-align:middle;"></i>Em Posse
+                            </button>
+                            <button type="button" class="chip border px-2.5 py-1 rounded-lg text-xs ${!m.emPosse ? 'active' : ''}" onclick="toggleMedNotInPossession(${i})" title="Medicamento não está em posse do paciente">
+                                <i data-lucide="package-x" style="width:13px;height:13px;margin-right:4px;vertical-align:middle;"></i>Não em Posse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleMedFlag(index, flag) {
+            if (state.medications[index]) {
+                state.medications[index][flag] = !state.medications[index][flag];
+                renderMeds();
+                updateCompilation();
+            }
+        }
+
+        function toggleMedNotStandardized(index) {
+            if (state.medications[index]) {
+                state.medications[index].padronizado = false;
+                renderMeds();
+                updateCompilation();
+            }
+        }
+
+        function toggleMedNotInPossession(index) {
+            if (state.medications[index]) {
+                state.medications[index].emPosse = false;
+                renderMeds();
+                updateCompilation();
+            }
+        }
+
+        function updateCompilation() {
+            const lines = [];
+            const now = new Date();
+            lines.push(`EVOLUÇÃO MÉDICA — ${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})}`);
+            lines.push('');
+            if (state.iniciais || state.idade || state.sexo || state.leito || state.ocupacao || state.origem) {
+                const ident = [];
+                if (state.iniciais) ident.push(`Pac: ${state.iniciais}`);
+                if (state.idade) ident.push(`${state.idade}a`);
+                if (state.sexo) ident.push(state.sexo === 'M' ? 'M' : 'F');
+                if (state.leito) ident.push(`Leito: ${state.leito}`);
+                if (state.ocupacao) ident.push(`Ocupação: ${state.ocupacao}`);
+                if (state.origem) ident.push(`Origem: ${state.origem}`);
+                lines.push(ident.join(' | '));
+            }
+            if (state.alergias.tem) lines.push(`⚠️ ALERGIAS: ${state.alergias.desc || 'Sim (não especificado)'}`);
+            if (state.cirurgias.teve) lines.push(`🏥 ANTECEDENTES CIRÚRGICOS: ${state.cirurgias.desc || 'Sim (não especificado)'}`);
+            if (state.internacaoPrior.teve) lines.push(`🏨 INTERNAÇÃO PRÉVIA: ${state.internacaoPrior.tempo || 'Sim (tempo não especificado)'}`);
+            if (state.queixaPrincipal.trim()) lines.push(`QUEIXA PRINCIPAL: ${state.queixaPrincipal.trim()}`);
+            
+            const v = state.vitals;
+            if (v.pa || v.fc || v.fr || v.temp || v.spo2) {
+                lines.push('');
+                lines.push('SINAIS VITAIS:');
+                if (v.pa) lines.push(`  PA: ${v.pa} mmHg`);
+                if (v.fc) lines.push(`  FC: ${v.fc} bpm`);
+                if (v.fr) lines.push(`  FR: ${v.fr} irpm`);
+                if (v.temp) lines.push(`  Temp: ${v.temp} °C`);
+                if (v.spo2) lines.push(`  SpO₂: ${v.spo2}%`);
+            }
+
+            const hasFindings = Object.values(state.selectedFindings).some(a => a.length > 0);
+            const hasObs = Object.values(state.observations).some(o => o && o.trim());
+            if (hasFindings || hasObs) {
+                lines.push('');
+                lines.push('EXAME FÍSICO:');
+                Object.keys(state.anamnesis).forEach(sys => {
+                    const f = state.selectedFindings[sys] || [];
+                    const o = state.observations[sys] || '';
+                    if (f.length || o.trim()) {
+                        lines.push(`  ${sys}: ${f.join(', ')}${o.trim() ? '. ' + o.trim() : ''}`);
+                    }
+                });
+                Object.keys(state.customSystems).forEach(sys => {
+                    const f = state.selectedFindings[sys] || [];
+                    const o = state.observations[sys] || '';
+                    if (f.length || o.trim()) {
+                        lines.push(`  ${sys}: ${f.join(', ')}${o.trim() ? '. ' + o.trim() : ''}`);
+                    }
+                });
+            }
+
+            if (state.medications.length) {
+                lines.push('');
+                lines.push('MEDICAÇÕES:');
+                state.medications.forEach((m, i) => {
+                    let med = `${i+1}. ${m.nome}`;
+                    if (m.dosagem) med += ` | ${m.dosagem}`;
+                    const flags = [];
+                    if (m.padronizado) flags.push('PADRONIZADO');
+                    if (m.emPosse) flags.push('EM POSSE');
+                    if (flags.length) med += ` [${flags.join(' | ')}]`;
+                    lines.push(med);
+                });
+            }
+
+            if (state.labs.length) {
+                lines.push('');
+                lines.push('EXAMES LABORATORIAIS:');
+                state.labs.forEach((l, i) => {
+                    let lab = `${i+1}. ${l.nome}`;
+                    if (l.valor) lab += `: ${l.valor}`;
+                    if (l.unidade) lab += ` ${l.unidade}`;
+                    lines.push(lab);
+                });
+            }
+
+
+            const accessLabels = { 'acesso_normal': 'Acesso Normal', 'acesso_restrito': 'Acesso Restrito', 'npo': 'NPO' };
+            const tubeLabels = { 'sim_sne': 'Sim (SNE)', 'nao': 'Não' };
+            const weightLabels = { 'peso_normal': 'Peso Normal', 'baixo_peso': 'Baixo Peso', 'sobrepeso': 'Sobrepeso' };
+            const hydrationLabels = { 'hidratado': 'Hidratado', 'desidratado': 'Desidratado', 'sobrecarga': 'Sobrecarga Hídrica' };
+            
+            if (state.nutrition.access || state.nutrition.naso_enteric_tube || state.nutrition.weight_status || state.nutrition.hydration_status || state.nutrition.notes) {
+                lines.push('');
+                lines.push('CONDIÇÕES NUTRICIONAIS:');
+                lines.push(`  Acesso: ${accessLabels[state.nutrition.access]}`);
+                lines.push(`  SNE: ${tubeLabels[state.nutrition.naso_enteric_tube]}`);
+                lines.push(`  Peso: ${weightLabels[state.nutrition.weight_status]}`);
+                lines.push(`  Hidratação: ${hydrationLabels[state.nutrition.hydration_status]}`);
+                if (state.nutrition.notes.trim()) lines.push(`  Obs: ${state.nutrition.notes.trim()}`);
+            }
+
+            if (state.smoking.isSmoker || state.smoking.recommendNRT || state.smoking.patchDose) {
+                lines.push('');
+                lines.push('STATUS DE TABAGISMO:');
+                lines.push(`  Fumante: ${state.smoking.isSmoker ? 'Sim' : 'Não'}`);
+                if (state.smoking.isSmoker) {
+                    lines.push(`  Recomendação TRN: ${state.smoking.recommendNRT ? 'Sim' : 'Não'}`);
+                    if (state.smoking.recommendNRT && state.smoking.patchDose) {
+                        lines.push(`  Adesivo: ${state.smoking.patchDose}`);
+                    }
+                }
+            }
+
+            const frequencyLabels = { 'diario': 'Diário', 'semanal': 'Semanal', 'ocasional': 'Ocasional' };
+            if (state.alcohol.isConsumer || state.alcohol.frequency || state.alcohol.quantity) {
+                lines.push('');
+                lines.push('CONSUMO DE BEBIDA ALCOÓLICA:');
+                lines.push(`  Consumidor: ${state.alcohol.isConsumer ? 'Sim' : 'Não'}`);
+                if (state.alcohol.isConsumer) {
+                    if (state.alcohol.frequency) {
+                        lines.push(`  Frequência: ${frequencyLabels[state.alcohol.frequency]}`);
+                    }
+                    if (state.alcohol.quantity.trim()) {
+                        lines.push(`  Quantidade: ${state.alcohol.quantity.trim()}`);
+                    }
+                }
+            }
+
+            const active = Object.entries(state.conditions).filter(([,v]) => v).map(([k]) => k);
+            if (active.length || state.conditionNotes.trim()) {
+                lines.push('');
+                lines.push('CONDIÇÕES ESPECIAIS:');
+                if (active.length) lines.push(`  ${active.join(', ')}`);
+                if (state.conditionNotes.trim()) lines.push(`  Obs: ${state.conditionNotes.trim()}`);
+            }
+
+            document.getElementById('output-area').value = lines.join('\n');
+        }
+
+        function toggleEditMode() {
+            const textarea = document.getElementById('output-area');
+            const btn = document.getElementById('edit-toggle-btn');
+            const isReadonly = textarea.readOnly;
+            
+            if (isReadonly) {
+                textarea.readOnly = false;
+                textarea.classList.remove('bg-slate-900/40');
+                textarea.classList.add('bg-slate-900/80', 'ring-2', 'ring-cyan-500/50');
+                btn.classList.add('ring-2', 'ring-cyan-500/50', 'text-cyan-400');
+                btn.innerHTML = '<i data-lucide="lock-open" style="width:14px;height:14px;"></i> Editando...';
+                textarea.focus();
+                showToast('Modo de edição ativado. Você pode agora editar a evolução.');
+            } else {
+                textarea.readOnly = true;
+                textarea.classList.remove('bg-slate-900/80', 'ring-2', 'ring-cyan-500/50');
+                textarea.classList.add('bg-slate-900/40');
+                btn.classList.remove('ring-2', 'ring-cyan-500/50', 'text-cyan-400');
+                btn.innerHTML = '<i data-lucide="pencil" style="width:14px;height:14px;"></i> Editar';
+                showToast('Modo de edição desativado.');
+            }
+            lucide.createIcons();
+        }
+
+        function copyOutput() {
+            const txt = document.getElementById('output-area').value;
+            if (!txt) return;
+            navigator.clipboard.writeText(txt).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> Copiado!';
+                lucide.createIcons();
+                setTimeout(() => { btn.innerHTML = '<i data-lucide="copy" style="width:14px;height:14px;"></i> Copiar'; lucide.createIcons(); }, 2000);
+            });
+        }
+
+        function polishWithAI() {
+            const outputArea = document.getElementById('output-area');
+            const polishBtn = document.getElementById('polish-btn');
+            const originalText = outputArea.value;
+            if (!originalText.trim()) return;
+
+            polishBtn.innerHTML = '<i data-lucide="loader" style="width:14px;height:14px;" class="animate-spin"></i> Processando...';
+            polishBtn.disabled = true;
+            lucide.createIcons();
+
+            setTimeout(() => {
+                try {
+                    const polishedText = polishClinicalNote(originalText);
+                    outputArea.value = polishedText;
+                    showToast('Evolução polida com sucesso!');
+                } catch (e) {
+                    showToast('Erro ao polir evolução: ' + e.message);
+                } finally {
+                    polishBtn.innerHTML = '<i data-lucide="sparkles" style="width:14px;height:14px;"></i> Polir com IA';
+                    polishBtn.disabled = false;
+                    lucide.createIcons();
+                }
+            }, 800);
+        }
+
+        function polishClinicalNote(text) {
+            const lines = text.split('\n');
+            const polished = [];
+            let currentSection = '';
+
+            const sectionImprovements = {
+                'EVOLUÇÃO MÉDICA': (line) => line,
+                'QUEIXA PRINCIPAL': (line) => {
+                    const match = line.match(/QUEIXA PRINCIPAL:\s*(.+)/i);
+                    if (match) {
+                        const complaint = match[1].trim();
+                        return `QUEIXA PRINCIPAL: Paciente relata ${complaint.toLowerCase()}.`;
+                    }
+                    return line;
+                },
+                'SINAIS VITAIS': (line) => {
+                    const match = line.match(/^\s*(PA|FC|FR|Temp|SpO₂):\s*(.+)/);
+                    if (match) {
+                        const [, vital, value] = match;
+                        const vitalFull = {
+                            'PA': 'Pressão Arterial',
+                            'FC': 'Frequência Cardíaca',
+                            'FR': 'Frequência Respiratória',
+                            'Temp': 'Temperatura',
+                            'SpO₂': 'Saturação de Oxigênio'
+                        };
+                        return `  ${vitalFull[vital]}: ${value.trim()}`;
+                    }
+                    return line;
+                },
+                'EXAME FÍSICO': (line) => {
+                    const match = line.match(/^\s*(\w+):\s*(.+)/);
+                    if (match && !line.includes('EXAME FÍSICO')) {
+                        const [, system, findings] = match;
+                        return `  ${system}: ${findings.trim()}`;
+                    }
+                    return line;
+                },
+                'MEDICAÇÕES': (line) => {
+                    const match = line.match(/^(\d+)\.\s*(.+?)\s*\|\s*(.+?)(?:\s*\[(.+?)\])?$/);
+                    if (match) {
+                        const [, num, med, dosage, flags] = match;
+                        let improved = `  ${num}. ${med.trim()} — ${dosage.trim()}`;
+                        if (flags) improved += ` [${flags}]`;
+                        return improved;
+                    }
+                    return line;
+                },
+                'CONDIÇÕES NUTRICIONAIS': (line) => {
+                    const match = line.match(/^\s*(Acesso|SNE|Peso|Hidratação|Obs):\s*(.+)/);
+                    if (match) {
+                        const [, field, value] = match;
+                        const fieldFull = {
+                            'Acesso': 'Acesso Alimentar',
+                            'SNE': 'Sonda Nasoentérica',
+                            'Peso': 'Estado Nutricional',
+                            'Hidratação': 'Status de Hidratação',
+                            'Obs': 'Observações'
+                        };
+                        return `  ${fieldFull[field] || field}: ${value.trim()}`;
+                    }
+                    return line;
+                },
+                'ALERGIAS': (line) => line,
+                'STATUS DE TABAGISMO': (line) => line,
+                'CONSUMO DE BEBIDA ALCOÓLICA': (line) => line,
+                'CONDIÇÕES ESPECIAIS': (line) => line
+            };
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                if (line.includes('EVOLUÇÃO MÉDICA')) {
+                    polished.push(line);
+                    currentSection = 'EVOLUÇÃO MÉDICA';
+                } else if (line.match(/^(QUEIXA PRINCIPAL|SINAIS VITAIS|EXAME FÍSICO|MEDICAÇÕES|CONDIÇÕES NUTRICIONAIS|ALERGIAS|STATUS DE TABAGISMO|CONSUMO DE BEBIDA ALCOÓLICA|CONDIÇÕES ESPECIAIS):/)) {
+                    polished.push('');
+                    polished.push(line);
+                    currentSection = line.split(':')[0];
+                } else if (line.trim() === '' || line.match(/^\s*$/)) {
+                    if (polished[polished.length - 1] !== '') polished.push('');
+                } else {
+                    const improveFn = sectionImprovements[currentSection];
+                    if (improveFn) {
+                        polished.push(improveFn(line));
+                    } else {
+                        polished.push(line);
+                    }
+                }
+            }
+
+            return polished.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+        }
+
+        function startDictation(target) {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { showToast('Reconhecimento de voz não suportado neste navegador.'); return; }
+            
+            const recognition = new SR();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            
+            let transcript = '';
+            let btn = event?.target?.closest('button');
+            if (btn) btn.disabled = true;
+            if (btn) btn.innerHTML = '<i data-lucide="loader" style="width:16px;height:16px;" class="animate-spin"></i>';
+            
+            recognition.onstart = () => {
+                if (btn) btn.style.borderColor = '#00ffc8';
+            };
+            
+            recognition.onresult = (evt) => {
+                transcript = '';
+                for (let i = evt.resultIndex; i < evt.results.length; i++) {
+                    const t = evt.results[i][0].transcript;
+                    transcript += t;
+                    if (evt.results[i].isFinal) break;
+                }
+                
+                if (transcript.trim()) {
+                    if (target === 'medication') {
+                        document.getElementById('med-name').value = transcript;
+                    } else if (target === 'conditions') {
+                        document.getElementById('conditions-notes').value = transcript;
+                    } else if (target === 'nutrition') {
+                        document.getElementById('nutrition-notes').value = transcript;
+                    } else if (target === 'queixa') {
+                        document.getElementById('inp-queixa').value = transcript;
+                    } else {
+                        const el = document.getElementById('obs-' + target);
+                        if (el) el.value = transcript;
+                    }
+                }
+            };
+            
+            recognition.onerror = (evt) => {
+                const errorMsg = evt.error === 'no-speech' ? 'Nenhuma fala detectada. Tente novamente.' : 'Erro no reconhecimento: ' + evt.error;
+                showToast(errorMsg);
+            };
+            
+            recognition.onend = () => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="mic" style="width:16px;height:16px;color:#00ffc8;"></i>';
+                    btn.style.borderColor = '';
+                    lucide.createIcons();
+                }
+                
+                if (transcript.trim()) {
+                    if (target === 'medication') {
+                        addMed();
+                    } else if (target === 'conditions') {
+                        state.conditionNotes = transcript;
+                    } else if (target === 'nutrition') {
+                        state.nutrition.notes = transcript;
+                    } else if (target === 'queixa') {
+                        state.queixaPrincipal = transcript;
+                    } else {
+                        state.observations[target] = transcript;
+                    }
+                    updateCompilation();
+                }
+            };
+            
+            try {
+                recognition.start();
+            } catch (e) {
+                showToast('Erro ao iniciar reconhecimento de voz.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="mic" style="width:16px;height:16px;color:#00ffc8;"></i>';
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm z-[999] transition-opacity';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAnamnesis();
+            renderConditions();
+            updateNutritionUI();
+            
+            // Lab preset dropdown handler
+            const presetSelect = document.getElementById('lab-preset');
+            presetSelect.addEventListener('change', function() {
+                const unitWrapper = document.getElementById('lab-unit-wrapper');
+                const customWrapper = document.getElementById('lab-custom-wrapper');
+                
+                if (this.value === 'custom') {
+                    unitWrapper.classList.remove('hidden');
+                    customWrapper.classList.remove('hidden');
+                    document.getElementById('lab-custom-name').focus();
+                } else if (this.value) {
+                    unitWrapper.classList.add('hidden');
+                    customWrapper.classList.add('hidden');
+                } else {
+                    unitWrapper.classList.add('hidden');
+                    customWrapper.classList.add('hidden');
+                }
+            });
+            
+            lucide.createIcons();
+        });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ff2d7f4b1b582e2',t:'MTc3OTM1ODc3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
